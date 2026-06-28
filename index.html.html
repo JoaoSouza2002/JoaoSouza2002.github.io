@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>João Souza — Cybersecurity</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0a0d13;
+    --surface:   #0f1520;
+    --border:    #1c2a40;
+    --accent:    #00c8ff;
+    --accent2:   #0066ff;
+    --warn:      #ff4d6a;
+    --text:      #c9d6e3;
+    --text-dim:  #5a7a99;
+    --text-head: #e8f4ff;
+    --mono:      'Share Tech Mono', monospace;
+    --sans:      'Inter', sans-serif;
+    --display:   'Space Grotesk', sans-serif;
+    --radius:    4px;
+    --glow: 0 0 24px rgba(0,200,255,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── SCANLINE overlay ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.04) 2px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── GRID LAYOUT ── */
+  .page-wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0;
+    background: rgba(10,13,19,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 14px 0;
+  }
+  nav .inner {
+    max-width: 1080px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+  .nav-brand span { color: var(--text-dim); }
+  nav ul { list-style: none; display: flex; gap: 28px; }
+  nav a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 100px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,200,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,255,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 80% at 60% 40%, black 30%, transparent 100%);
+  }
+  .hero-content { position: relative; }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    margin-bottom: 32px;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34,197,94,0.6);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 700;
+    color: var(--text-head);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .hero h1 .accent-name { color: var(--accent); }
+
+  .hero-role {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero p {
+    max-width: 560px;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── SECTION BASE ── */
+  section { padding: 80px 0; border-top: 1px solid var(--border); }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    color: var(--text-head);
+    margin-bottom: 40px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .about-text p { margin-bottom: 16px; color: var(--text); }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .stat-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--glow);
+  }
+  .stat-card .stat-val {
+    font-family: var(--mono);
+    font-size: 28px;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-card .stat-lbl {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PROJECT CARD ── */
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .project-card:hover { border-color: rgba(0,200,255,0.4); box-shadow: var(--glow); }
+  .project-card:hover::before { opacity: 1; }
+
+  .project-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 16px;
+    margin-bottom: 16px;
+  }
+  .project-title {
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--text-head);
+  }
+  .project-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    white-space: nowrap;
+  }
+  .project-desc { color: var(--text); margin-bottom: 20px; font-size: 14px; }
+
+  .feature-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 24px;
+  }
+  .feature-list li {
+    display: flex; gap: 10px;
+    font-size: 13px; color: var(--text);
+  }
+  .feature-list li::before {
+    content: '›';
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tech-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tech-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: rgba(0,200,255,0.07);
+    border: 1px solid rgba(0,200,255,0.18);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .skill-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .skill-group:hover { border-color: rgba(0,200,255,0.3); }
+  .skill-group-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .skill-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-item {
+    font-size: 12px;
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  /* ── AREAS ── */
+  .areas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .area-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .area-card:hover {
+    border-color: rgba(0,200,255,0.35);
+    box-shadow: var(--glow);
+  }
+  .area-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+  .area-name {
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-head);
+  }
+  .area-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── EDUCATION ── */
+  .edu-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    display: flex; align-items: flex-start; gap: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .edu-card:hover { border-color: rgba(0,200,255,0.3); }
+  .edu-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+    margin-top: 6px;
+    box-shadow: 0 0 10px rgba(0,102,255,0.5);
+  }
+  .edu-title { font-family: var(--display); font-size: 16px; font-weight: 600; color: var(--text-head); margin-bottom: 4px; }
+  .edu-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; }
+  .edu-courses { font-family: var(--mono); font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+
+  /* ── TERMINAL CTA ── */
+  .terminal-block {
+    background: #060b10;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 40px;
+  }
+  .terminal-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-red { background: #ff5f57; }
+  .t-yellow { background: #febc2e; }
+  .t-green { background: #28c840; }
+  .terminal-body { padding: 24px 28px; font-family: var(--mono); font-size: 13px; line-height: 2; }
+  .t-prompt { color: var(--accent2); }
+  .t-cmd { color: var(--text); }
+  .t-out { color: #5a7a99; }
+  .t-link { color: var(--accent); text-decoration: none; }
+  .t-link:hover { text-decoration: underline; }
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-left: 4px;
+    animation: blink 1.1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 680px) {
+    .about-grid { grid-template-columns: 1fr; }
+    nav ul { gap: 16px; }
+    .hero { padding: 72px 0 56px; }
+    .edu-card { flex-direction: column; gap: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status-dot { animation: none; }
+    .cursor { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <div class="nav-brand">js<span>@</span>soc <span>~</span></div>
+    <ul>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#projeto">Projeto</a></li>
+      <li><a href="#areas">Áreas</a></li>
+      <li><a href="#skills">Stack</a></li>
+      <li><a href="#formacao">Formação</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-wrap">
+  <section class="hero" style="border-top:none; padding-top:100px;">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        Disponível para oportunidades — Estágio / Júnior SOC
+      </div>
+      <h1>
+        <span class="accent-name">João Souza</span>
+      </h1>
+      <div class="hero-role">Cybersecurity Student · Blue Team · SOC Operations</div>
+      <p>
+        Estudante de Cybersecurity com foco em Security Operations Center, Threat Intelligence e automação de processos de segurança. Construo ferramentas reais para resolver desafios reais de um SOC.
+      </p>
+      <div class="hero-cta">
+        <a href="#projeto" class="btn-primary">Ver Projetos</a>
+        <a href="#contato" class="btn-secondary">Entrar em contato</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre">
+    <div class="section-label">// sobre</div>
+    <h2 class="section-title">Construindo segurança com código</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>Acredito que a melhor forma de aprender segurança é colocando a mão na massa. Por isso desenvolvo projetos práticos que simulam desafios reais de um Centro de Operações de Segurança.</p>
+        <p>Meu objetivo é construir uma carreira sólida em Segurança da Informação — desenvolvendo soluções que auxiliem na detecção de ameaças, automatização de processos e fortalecimento da postura de segurança das organizações.</p>
+        <p>Além do estudo contínuo, utilizo plataformas como <strong style="color:var(--text-head)">TryHackMe</strong> para reforçar conceitos em laboratórios práticos, com foco em análise de alertas, resposta a incidentes e o framework <strong style="color:var(--text-head)">MITRE ATT&CK</strong>.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-card">
+          <span class="stat-val">SOC</span>
+          <span class="stat-lbl">Foco principal em operações</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">IoC</span>
+          <span class="stat-lbl">Triagem e enriquecimento automatizados</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">ATT&CK</span>
+          <span class="stat-lbl">Mapeamento de técnicas MITRE</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">Blue</span>
+          <span class="stat-lbl">Defesa, detecção e resposta</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJETO -->
+  <section id="projeto">
+    <div class="section-label">// projetos</div>
+    <h2 class="section-title">Ferramentas desenvolvidas</h2>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-title">SOC IOC Triage Automator</div>
+        <div class="project-badge">Em desenvolvimento</div>
+      </div>
+      <p class="project-desc">
+        Ferramenta Python para automatizar a triagem inicial de Indicadores de Comprometimento (IoCs). Simula o fluxo de trabalho de um analista SOC — da extração ao relatório final — reduzindo o tempo de resposta em análises de segurança.
+      </p>
+      <ul class="feature-list">
+        <li>Extração e validação de IoCs (IPs, domínios, hashes e URLs)</li>
+        <li>Defanging automático de URLs para manipulação segura</li>
+        <li>Enriquecimento com WHOIS e integração com a API do VirusTotal</li>
+        <li>Classificação de risco e score de ameaça por indicador</li>
+        <li>Mapeamento de possíveis técnicas do framework MITRE ATT&CK</li>
+        <li>Geração automática de evidências em formatos TXT e JSON</li>
+      </ul>
+      <div class="tech-row">
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">VirusTotal API</span>
+        <span class="tech-tag">WHOIS</span>
+        <span class="tech-tag">MITRE ATT&CK</span>
+        <span class="tech-tag">REST APIs</span>
+        <span class="tech-tag">JSON</span>
+        <span class="tech-tag">FastAPI</span>
+      </div>
+      <div style="margin-top:20px;">
+        <a href="https://github.com/JoaoSouza2002/soc-ioc-triage-automator" target="_blank" class="btn-secondary" style="font-size:11px; padding:9px 18px; display:inline-flex; align-items:center; gap:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          Ver no GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ÁREAS -->
+  <section id="areas">
+    <div class="section-label">// interesses</div>
+    <h2 class="section-title">Áreas de atuação</h2>
+    <div class="areas-grid">
+      <div class="area-card">
+        <div class="area-icon">🛡️</div>
+        <div class="area-name">Security Operations Center</div>
+        <div class="area-desc">Monitoramento contínuo, análise de alertas e operações defensivas em ambientes corporativos.</div>
+      </div>
+      <div class="area-card">
+        <div class="area-icon">🔵</div>
+        <div class="area-name">Blue Team</div>
+        <div class="area-desc">Detecção de ameaças, resposta a incidentes e fortalecimento da postura de segurança.</div>
+      </div>
+      <div class="area-card">
+        <div class="area-icon">🔍</div>
+        <div class="area-name">Threat Intelligence</div>
+        <div class="area-desc">Coleta, análise e enriquecimento de indicadores de comprometimento e ameaças emergentes.</div>
+      </div>
+      <div class="area-card">
+        <div class="area-icon">⚡</div>
+        <div class="area-name">Automação de Segurança</div>
+        <div class="area-desc">Desenvolvimento de ferramentas para automatizar processos de triagem, detecção e resposta.</div>
+      </div>
+      <div class="area-card">
+        <div class="area-icon">🐧</div>
+        <div class="area-name">Segurança em Linux</div>
+        <div class="area-desc">Hardening, monitoramento de endpoints e análise forense em ambientes Linux.</div>
+      </div>
+      <div class="area-card">
+        <div class="area-icon">🚨</div>
+        <div class="area-name">Resposta a Incidentes</div>
+        <div class="area-desc">Contenção, investigação e recuperação de incidentes de segurança em ambientes corporativos.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label">// stack técnico</div>
+    <h2 class="section-title">Tecnologias e ferramentas</h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-group-label">Linguagens</div>
+        <div class="skill-items">
+          <span class="skill-item">Python</span>
+          <span class="skill-item">Bash</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Sistemas</div>
+        <div class="skill-items">
+          <span class="skill-item">Linux</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Segurança</div>
+        <div class="skill-items">
+          <span class="skill-item">Burp Suite</span>
+          <span class="skill-item">VirusTotal</span>
+          <span class="skill-item">WHOIS</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Dev & APIs</div>
+        <div class="skill-items">
+          <span class="skill-item">FastAPI</span>
+          <span class="skill-item">REST APIs</span>
+          <span class="skill-item">Postman</span>
+          <span class="skill-item">Git</span>
+          <span class="skill-item">GitHub</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Frameworks</div>
+        <div class="skill-items">
+          <span class="skill-item">MITRE ATT&CK</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Plataformas</div>
+        <div class="skill-items">
+          <span class="skill-item">TryHackMe</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMAÇÃO -->
+  <section id="formacao">
+    <div class="section-label">// formação</div>
+    <h2 class="section-title">Educação</h2>
+
+    <div class="edu-card">
+      <div class="edu-dot"></div>
+      <div>
+        <div class="edu-title">Graduação em Cybersecurity</div>
+        <div class="edu-sub">Em andamento</div>
+        <div class="edu-courses">
+          Redes de Computadores · Fundamentos e Arquitetura de Computadores<br>
+          Gestão de Serviços em TI (cursando) · Segurança da Informação
+        </div>
+      </div>
+    </div>
+
+    <div class="edu-card">
+      <div class="edu-dot" style="background:var(--accent); box-shadow:0 0 10px rgba(0,200,255,0.4);"></div>
+      <div>
+        <div class="edu-title">Aprendizado Contínuo</div>
+        <div class="edu-sub">Laboratórios e projetos práticos</div>
+        <div class="edu-courses">
+          TryHackMe — SOC, Blue Team, Resposta a Incidentes<br>
+          MITRE ATT&CK Framework · Threat Intelligence · Automação com Python
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section id="contato">
+    <div class="section-label">// contato</div>
+    <h2 class="section-title">Vamos conversar</h2>
+
+    <div class="terminal-block">
+      <div class="terminal-bar">
+        <span class="t-dot t-red"></span>
+        <span class="t-dot t-yellow"></span>
+        <span class="t-dot t-green"></span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">~$</span> <span class="t-cmd">cat oportunidades.txt</span></div>
+        <div class="t-out">Buscando: Estágio em Cybersecurity | SOC Analyst Intern | Analista SOC Júnior</div>
+        <br>
+        <div><span class="t-prompt">~$</span> <span class="t-cmd">cat contato.json</span></div>
+        <div class="t-out">{</div>
+        <div class="t-out">&nbsp;&nbsp;"nome": "João Souza",</div>
+        <div class="t-out">&nbsp;&nbsp;"email": <a class="t-link" href="mailto:antoniojoaosouzadasilva@gmail.com">"antoniojoaosouzadasilva@gmail.com"</a>,</div>
+        <div class="t-out">&nbsp;&nbsp;"github": <a class="t-link" href="https://github.com/JoaoSouza2002" target="_blank">"github.com/JoaoSouza2002"</a>,</div>
+        <div class="t-out">&nbsp;&nbsp;"linkedin": <a class="t-link" href="https://www.linkedin.com/in/ant%C3%B4nio-jo%C3%A3o-souza-da-silva-32b986340/" target="_blank">"linkedin.com/in/antonio-joao-souza"</a>,</div>
+        <div class="t-out">&nbsp;&nbsp;"disponivel": true</div>
+        <div class="t-out">}</div>
+        <br>
+        <div><span class="t-prompt">~$</span><span class="cursor"></span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div>João Souza · Cybersecurity · 2025 — <span style="color:var(--accent)">Disponível para oportunidades</span></div>
+</footer>
+
+</body>
+</html>
